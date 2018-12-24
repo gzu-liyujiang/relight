@@ -31,8 +31,8 @@ public class UserWidget extends AndroidWidget<View> {
     }
 
     @Override
-    public void updateView(View view) {
-        super.updateView(view);
+    public void update() {
+        super.update();
         tvId.setText(String.valueOf(user.getId()));
         tvName.setText(user.getName());
     }

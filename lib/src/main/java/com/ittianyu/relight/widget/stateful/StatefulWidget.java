@@ -1,38 +1,49 @@
 package com.ittianyu.relight.widget.stateful;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.view.View;
 
-import com.ittianyu.relight.widget.StatefulContainerWidget;
+import com.ittianyu.relight.widget.ContainerWidget;
 import com.ittianyu.relight.widget.Widget;
-import com.ittianyu.relight.widget.native_.BaseAndroidWidget;
 import com.ittianyu.relight.widget.stateful.state.SetState;
 import com.ittianyu.relight.widget.stateful.state.State;
-import com.ittianyu.relight.widget.stateful.state.listener.OnUpdateListener;
 import com.ittianyu.relight.widget.stateful.state.strategy.CacheStrategy;
-import com.ittianyu.relight.widget.stateless.StatelessWidget;
 
 public abstract class StatefulWidget<V extends View, T extends Widget<V>> extends Widget<V>
-        implements StatefulContainerWidget<V, T>, OnUpdateListener, SetState {
+        implements ContainerWidget<V, T>, SetState {
     protected State<T> state;
     protected T widget;
 
-    public StatefulWidget(Context context) {
-        super(context);
+    public StatefulWidget(Context context, Lifecycle lifecycle) {
+        super(context, lifecycle);
     }
 
     abstract protected State<T> createState(Context context);
 
     @Override
     public V render() {
-        if (null == state) {
-            state = createState(context);
-            state.setOnUpdateListener(this);
-            state.init();
-            widget = state.build(context);
-            initWidget(widget);
+        if (state != null) {
+            return widget.render();
         }
-        return widget.render();
+
+        state = createState(context);
+        if (state == null)
+            throw new IllegalStateException("can't create state");
+        state.init();
+        widget = state.build(context);
+        if (widget == null)
+            throw new IllegalStateException("can't build widget");
+        state.setOnUpdateListener(this);
+        V view = widget.render();
+        if (view == null)
+            throw new IllegalStateException("can't render view");
+        initWidget(widget);
+        update();
+        if (lifecycle != null) {
+            lifecycle.addObserver(this);
+        }
+        return view;
     }
 
     @Override
@@ -61,23 +72,20 @@ public abstract class StatefulWidget<V extends View, T extends Widget<V>> extend
     }
 
     @Override
-    public void update() {
-        updateWidget(widget);
+    public T getInnerWidget() {
+        return widget;
     }
 
-    public void updateProps(Widget widget) {
-        // stateless 的实例 widget 并不是直接渲染的 widget，所以这里对里面的实际 widget 进行获取
-        if (widget instanceof StatefulWidget) {
-            widget = ((StatefulWidget) widget).widget;
-        }
+    @Override
+    public void update() {
+        widget.update();
+    }
 
-        if (widget instanceof BaseAndroidWidget) {
-            //noinspection unchecked
-            ((BaseAndroidWidget) widget).updateProps(widget.render());
-        } else if (widget instanceof StatefulWidget) {
-            ((StatefulWidget) widget).updateProps(widget);
-        } else if (widget instanceof StatelessWidget) {
-            ((StatelessWidget) widget).updateProps(widget);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (state != null) {
+            state.dispose();
         }
     }
 }

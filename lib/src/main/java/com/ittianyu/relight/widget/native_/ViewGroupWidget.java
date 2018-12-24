@@ -2,27 +2,51 @@ package com.ittianyu.relight.widget.native_;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 
-import com.ittianyu.relight.view.AndroidRender;
+import com.ittianyu.relight.widget.ContainerWidget;
 import com.ittianyu.relight.widget.Widget;
-import com.ittianyu.relight.widget.stateful.StatefulWidget;
-import com.ittianyu.relight.widget.stateless.StatelessWidget;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
-public abstract class ViewGroupWidget<T extends ViewGroup> extends BaseAndroidWidget<T> {
+public abstract class ViewGroupWidget<V extends ViewGroup, T extends ViewGroupWidget>
+        extends BaseAndroidWidget<V, T> {
     protected List<Widget> children = new LinkedList<>();
+    private Widget[] tmpChildren;
 
     public ViewGroupWidget(Context context, Lifecycle lifecycle, Widget... children) {
         super(context, lifecycle);
+        tmpChildren = children;
+    }
 
-        // add children
-        if (null == children)
-            children = new Widget[0];
-
-        addChildren(false, true, children);
+    @Override
+    public V render() {
+        // render children first
+        List<View> views = null;
+        if (tmpChildren != null) {
+            views = new ArrayList<>(tmpChildren.length);
+            for (Widget child: tmpChildren) {
+                if (child == null) {
+                    continue;
+                }
+                views.add(child.render());
+                children.add(child);
+            }
+            tmpChildren = null;
+        }
+        // render self
+        V view = super.render();
+        // add children to ViewGroup
+        if (views != null) {
+            for (View v : views) {
+                view.addView(v);
+            }
+        }
+        return view;
     }
 
     @Override
@@ -30,81 +54,73 @@ public abstract class ViewGroupWidget<T extends ViewGroup> extends BaseAndroidWi
     }
 
     @Override
-    public void updateView(T view) {
+    public void update() {
         for (Widget widget : children) {
-            if (widget instanceof AndroidRender) {
-                //noinspection unchecked
-                ((AndroidRender) widget).updateView(widget.render());
-            } else if (widget instanceof StatefulWidget) {
-                ((StatefulWidget) widget).setState(null);
-            } else if (widget instanceof StatelessWidget) {
-                ((StatelessWidget) widget).update(widget);
-            }
+            widget.update();
         }
     }
 
     /**
-     * call when add view which was removed
+     * called when add child
      */
     public void updateChildrenProps() {
-        for (Widget widget : children) {
-            if (widget instanceof BaseAndroidWidget) {
-                ((BaseAndroidWidget) widget).updateProps(widget.render());
-            } else if (widget instanceof StatelessWidget) {
-                ((StatelessWidget) widget).updateProps(widget);
-            } else if (widget instanceof StatefulWidget) {
-                ((StatefulWidget) widget).updateProps(widget);
+        for (Widget child : children) {
+            Queue<Widget> widgets = new LinkedList<>();
+            widgets.add(child);
+            while (!widgets.isEmpty()) {
+                Widget widget = widgets.poll();
+                if (widget instanceof ViewGroupWidget) {
+                    ((ViewGroupWidget) widget).updateChildrenProps();
+                    ((ViewGroupWidget) widget).updateProps(widget.render());
+                } else if (widget instanceof BaseAndroidWidget) {
+                    ((BaseAndroidWidget) widget).updateProps(widget.render());
+                } else if (widget instanceof ContainerWidget) {
+                    Widget innerWidget = ((ContainerWidget) widget).getInnerWidget();
+                    widgets.add(innerWidget);
+                }
             }
         }
     }
 
-    public ViewGroupWidget<T> addChild(Widget widget) {
+    public T addChild(Widget widget) {
         return addChild(widget, true);
     }
 
-    public ViewGroupWidget<T> addChild(Widget widget, boolean updateProps) {
-        children.add(widget);
+    public T addChild(Widget widget, boolean updateProps) {
         view.addView(widget.render());
+        children.add(widget);
         if (updateProps) {
             updateChildrenProps();
             updateProps(view);
         }
-        return this;
+        return self();
     }
 
-    public ViewGroupWidget<T> addChildren(Widget... children) {
+    public T addChildren(Widget... children) {
         return addChildren(true, children);
     }
 
-    public ViewGroupWidget<T> addChildren(boolean updateProps, Widget... children) {
-        return addChildren(updateProps, updateProps, children);
-    }
-
-    public ViewGroupWidget<T> addChildren(boolean updateProps, boolean updateChildrenProps, Widget... children) {
+    public T addChildren(boolean updateProps, Widget... children) {
         for (Widget widget : children) {
             addChild(widget, false);
         }
-        if (updateChildrenProps) {
-            updateChildrenProps();
-        }
         if (updateProps) {
+            updateChildrenProps();
             updateProps(view);
         }
-        return this;
+        return self();
     }
 
-    public ViewGroupWidget<T> removeChild(Widget widget) {
+    public T removeChild(Widget widget) {
         children.remove(weight);
         view.removeView(widget.render());
-        return this;
+        return self();
     }
 
-    public ViewGroupWidget<T> removeAllChildren() {
-        for (Widget widget : children) {
-            view.removeView(widget.render());
-        }
+    public T removeAllChildren() {
+        view.removeAllViews();
         children.clear();
-        return this;
+        return self();
     }
 
 }

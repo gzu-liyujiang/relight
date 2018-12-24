@@ -5,59 +5,49 @@ import android.content.Context;
 import android.view.View;
 
 import com.ittianyu.relight.view.AndroidRender;
-import com.ittianyu.relight.widget.LifecycleWidget;
+import com.ittianyu.relight.widget.Widget;
 
-public abstract class AndroidWidget<T extends View> extends LifecycleWidget<T> implements AndroidRender<T> {
-    protected T view;
-    protected final Lifecycle lifecycle;
-    private boolean addObserver = false;
+public abstract class AndroidWidget<V extends View> extends Widget<V>
+        implements AndroidRender<V> {
+    protected V view;
+    private boolean init;
 
     public AndroidWidget(Context context, Lifecycle lifecycle) {
-        super(context);
-        this.lifecycle = lifecycle;
+        super(context, lifecycle);
         view = createView(context);
         if (view == null)
             throw new IllegalStateException("can't render view");
     }
 
     @Override
-    public void onResume() {
+    public V render() {
+        if (!init) {
+            init = true;
+            init();
+            if (null != lifecycle) {
+                lifecycle.addObserver(this);
+            }
+        }
+        return view;
     }
 
-    @Override
-    public void onPause() {
-    }
-
-    @Override
-    public void onStop() {
-    }
-
-    @Override
-    public void onStart() {
+    private void init() {
         initView(view);
-        bindEvent(view);
+        initEvent(view);
         initData();
-        updateView(view);
+        update();
     }
 
-    public void bindEvent(T view) {
+    public void initView(V view) {
+    }
+
+    public void initEvent(V view) {
     }
 
     public void initData() {
     }
 
-    public void updateView(T view) {
-    }
-
     @Override
-    public void onDestroy() {
-    }
-
-    public T render() {
-        if (!addObserver) {
-            addObserver = true;
-            lifecycle.addObserver(this);
-        }
-        return view;
+    public void update() {
     }
 }

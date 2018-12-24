@@ -19,12 +19,10 @@ import com.ittianyu.relight.widget.stateless.StatelessWidget;
  * Created by liyujiang on 2018/11/21 17:25
  */
 public class GirlLoadingWidget extends StatelessWidget<LinearLayout, LinearWidget> {
-    protected Lifecycle lifecycle;
     protected CharSequence text;
 
     public GirlLoadingWidget(Context context, Lifecycle lifecycle, CharSequence text) {
-        super(context);
-        this.lifecycle = lifecycle;
+        super(context,lifecycle);
         this.text = text;
     }
 
@@ -37,7 +35,7 @@ public class GirlLoadingWidget extends StatelessWidget<LinearLayout, LinearWidge
     }
 
     private Widget renderProgress() {
-        return new BaseAndroidWidget<ProgressBar>(context, lifecycle) {
+        return new BaseAndroidWidget<ProgressBar, BaseAndroidWidget>(context, lifecycle) {
             @Override
             protected void initProps() {
                 width = dp(30);

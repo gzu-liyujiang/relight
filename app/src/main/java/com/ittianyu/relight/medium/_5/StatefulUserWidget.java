@@ -12,13 +12,13 @@ import com.ittianyu.relight.utils.RetryUtils;
 import com.ittianyu.relight.utils.StateUtils;
 import com.ittianyu.relight.widget.native_.LinearWidget;
 import com.ittianyu.relight.widget.native_.TextWidget;
-import com.ittianyu.relight.widget.stateful.LifecycleStatefulWidget;
+import com.ittianyu.relight.widget.stateful.StatefulWidget;
 import com.ittianyu.relight.widget.stateful.state.State;
 
 import java.util.Date;
 import java.util.concurrent.Callable;
 
-public class StatefulUserWidget extends LifecycleStatefulWidget<LinearLayout, LinearWidget> {
+public class StatefulUserWidget extends StatefulWidget<LinearLayout, LinearWidget> {
     private static final int RETRY_COUNT = 2;// This task is executed up to 3 times at most
 
     private UserBean user;
@@ -64,13 +64,12 @@ public class StatefulUserWidget extends LifecycleStatefulWidget<LinearLayout, Li
                 .matchParent()
                 .onClickListener(loadData);
 
-        updateWidget(widget);
-
         loadData.onClick(null);
     }
 
     @Override
-    public void updateWidget(LinearWidget widget) {
+    public void update() {
+        super.update();
         String id;
         String name;
         if (user == null) {

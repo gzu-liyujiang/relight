@@ -39,6 +39,8 @@ dependencies {
 
     //     Support library depends on this lightweight import
     implementation "android.arch.lifecycle:runtime:$lifecycle_version"
+
+    provided 'com.google.code.gson:gson:2.8.5'
 }
 
 

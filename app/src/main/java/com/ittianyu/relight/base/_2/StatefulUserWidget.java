@@ -7,10 +7,10 @@ import android.view.View;
 import com.ittianyu.relight.common.bean.UserBean;
 import com.ittianyu.relight.common.datasource.UserDataSource;
 import com.ittianyu.relight.utils.StateUtils;
-import com.ittianyu.relight.widget.stateful.LifecycleStatefulWidget;
 import com.ittianyu.relight.widget.stateful.state.State;
+import com.ittianyu.relight.widget.stateful.StatefulWidget;
 
-public class StatefulUserWidget extends LifecycleStatefulWidget<View, UserWidget> {
+public class StatefulUserWidget extends StatefulWidget<View, UserWidget> {
     private UserBean user = UserDataSource.getInstance().getUser();
 
     public StatefulUserWidget(Context context, Lifecycle lifecycle) {
@@ -38,7 +38,8 @@ public class StatefulUserWidget extends LifecycleStatefulWidget<View, UserWidget
     }
 
     @Override
-    public void updateWidget(UserWidget widget) {
+    public void update() {
+        super.update();
         widget.setUser(user);
     }
 }

@@ -19,15 +19,13 @@ import com.ittianyu.relight.widget.stateless.StatelessWidget;
  * Created by liyujiang on 2018/11/21 17:25
  */
 public class GirlErrorWidget extends StatelessWidget<LinearLayout, LinearWidget> {
-    protected Lifecycle lifecycle;
     protected CharSequence text;
     protected View.OnClickListener onClickListener;
     protected ImageWidget imageWidget;
     protected TextWidget textWidget;
 
     public GirlErrorWidget(Context context, Lifecycle lifecycle, CharSequence text, View.OnClickListener onClickListener) {
-        super(context);
-        this.lifecycle = lifecycle;
+        super(context,lifecycle);
         this.text = text;
         this.onClickListener = onClickListener;
     }

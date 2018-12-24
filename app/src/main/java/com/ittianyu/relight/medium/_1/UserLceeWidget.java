@@ -5,10 +5,8 @@ import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
-
 
 import com.ittianyu.relight.common.adapter.UserItemAdapter;
 import com.ittianyu.relight.common.bean.UserBean;
@@ -19,10 +17,11 @@ import com.ittianyu.relight.widget.native_.FrameWidget;
 import com.ittianyu.relight.widget.native_.RecyclerWidget;
 import com.ittianyu.relight.widget.stateful.lcee.CommonEmptyWidget;
 import com.ittianyu.relight.widget.stateful.lcee.CommonLoadingWidget;
-import com.ittianyu.relight.widget.stateful.lcee.LceeWidget;
 import com.ittianyu.relight.widget.stateful.lcee.LceeStatus;
+import com.ittianyu.relight.widget.stateful.lcee.LceeWidget;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class UserLceeWidget extends LceeWidget {
     private List<UserBean> data = Collections.emptyList();
@@ -81,14 +80,15 @@ public class UserLceeWidget extends LceeWidget {
             }
 
             @Override
-            public void updateView(RecyclerView view) {
+            public void update() {
+                super.update();
                 adapter.setData(data);
             }
         };
     }
 
-    private BaseAndroidWidget<FloatingActionButton> renderFab() {
-        return new BaseAndroidWidget<FloatingActionButton>(context, lifecycle) {
+    private BaseAndroidWidget renderFab() {
+        return new BaseAndroidWidget<FloatingActionButton, BaseAndroidWidget>(context, lifecycle) {
             @Override
             protected void initProps() {
                 layoutGravity = Gravity.END | Gravity.BOTTOM;

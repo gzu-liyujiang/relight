@@ -10,7 +10,6 @@ import com.ittianyu.relight.widget.native_.AndroidWidget;
 import com.ittianyu.relight.widget.stateful.StatefulWidget;
 import com.ittianyu.relight.widget.stateful.state.State;
 import com.ittianyu.relight.widget.stateful.state.strategy.FilterStrategy;
-import com.ittianyu.relight.widget.stateless.StatelessWidget;
 
 public class StateUtils {
 
@@ -19,7 +18,8 @@ public class StateUtils {
     }
 
     public static <V extends View> State<AndroidWidget<V>> create(final AndroidRender<V> androidRender,
-                                                                  final Lifecycle lifecycle, FilterStrategy updateStateStrategy) {
+                                                                  final Lifecycle lifecycle,
+                                                                  FilterStrategy updateStateStrategy) {
         return new State<AndroidWidget<V>>(updateStateStrategy) {
             private AndroidWidget<V> widget;
 
@@ -27,12 +27,6 @@ public class StateUtils {
             public AndroidWidget<V> build(Context context) {
                 widget = WidgetUtils.createAndroidWidget(context, androidRender, lifecycle);
                 return widget;
-            }
-
-            @Override
-            public void update() {
-                super.update();
-                androidRender.updateView(widget.render());
             }
         };
     }
@@ -46,19 +40,6 @@ public class StateUtils {
             @Override
             public T build(Context context) {
                 return widget;
-            }
-
-            @Override
-            public void update() {
-                super.update();
-                if (widget instanceof AndroidWidget) {
-                    //noinspection unchecked
-                    ((AndroidWidget) widget).updateView(widget.render());
-                } else if (widget instanceof StatelessWidget) {
-                    ((StatelessWidget) widget).update(widget);
-                } else if (widget instanceof StatefulWidget) {
-                    ((StatefulWidget) widget).update();
-                }
             }
         };
     }

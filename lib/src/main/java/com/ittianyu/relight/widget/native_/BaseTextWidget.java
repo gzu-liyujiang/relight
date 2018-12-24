@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.ittianyu.relight.utils.DensityUtils;
 
-public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extends BaseAndroidWidget<V> {
+public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extends BaseAndroidWidget<V, T> {
 
     protected Integer gravity;
     protected CharSequence text;
@@ -87,58 +87,61 @@ public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extend
         }
     }
 
-    protected final T self() {
-        //noinspection unchecked
-        return (T) this;
-    }
-
     public T text(CharSequence text) {
         this.text = text;
         view.setText(text);
         return self();
     }
 
-    public T gravity(int gravity) {
+    public T text(String text) {
+        return text((CharSequence) text);
+    }
+
+    public T gravity(Integer gravity) {
         this.gravity = gravity;
         view.setGravity(gravity);
         return self();
     }
 
-    public T textColor(int textColor) {
+    public T textColor(Integer textColor) {
         this.textColor = textColor;
         view.setTextColor(textColor);
         return self();
     }
 
-    public T textSize(int px) {
+    public T textSize(Integer px) {
         this.textSize = px;
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         return self();
     }
 
-    public T textSize(float sp) {
+    public T textSize(Float sp) {
         return textSize(DensityUtils.sp2px(context, sp));
     }
 
-    public T lines(int lines) {
+    public T textSize(Double sp) {
+        return textSize(DensityUtils.sp2px(context, sp.floatValue()));
+    }
+
+    public T lines(Integer lines) {
         this.lines = lines;
         view.setLines(lines);
         return self();
     }
 
-    public T maxLines(int maxLines) {
+    public T maxLines(Integer maxLines) {
         this.maxLines = maxLines;
         view.setMaxLines(maxLines);
         return self();
     }
 
-    public T drawablePadding(int res) {
+    public T drawablePadding(Integer res) {
         drawablePadding = res;
         view.setCompoundDrawablePadding(drawablePadding);
         return self();
     }
 
-    public T drawableLeft(@DrawableRes int res) {
+    public T drawableLeft(@DrawableRes Integer res) {
         return drawableLeft(drawable(res));
     }
 
@@ -151,7 +154,7 @@ public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extend
         return self();
     }
 
-    public T drawableTop(@DrawableRes int res) {
+    public T drawableTop(@DrawableRes Integer res) {
         return drawableTop(drawable(res));
     }
 
@@ -164,7 +167,7 @@ public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extend
         return self();
     }
 
-    public T drawableRight(@DrawableRes int res) {
+    public T drawableRight(@DrawableRes Integer res) {
         return drawableRight(drawable(res));
     }
 
@@ -177,7 +180,7 @@ public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extend
         return self();
     }
 
-    public T drawableBottom(@DrawableRes int res) {
+    public T drawableBottom(@DrawableRes Integer res) {
         return drawableBottom(drawable(res));
     }
 
@@ -190,13 +193,13 @@ public class BaseTextWidget<V extends TextView, T extends BaseTextWidget> extend
         return self();
     }
 
-    public T allCaps(boolean enable) {
+    public T allCaps(Boolean enable) {
         this.allCaps = enable;
         view.setAllCaps(allCaps);
         return self();
     }
 
-    public T enabled(boolean enabled) {
+    public T enabled(Boolean enabled) {
         this.enabled = enabled;
         view.setEnabled(enabled);
         return self();

@@ -9,12 +9,16 @@ import android.widget.LinearLayout;
 import com.ittianyu.relight.utils.ViewUtils;
 import com.ittianyu.relight.widget.Widget;
 
-public class LinearWidget extends ViewGroupWidget<LinearLayout> {
-    public static final int horizontal = 0;
-    public static final int vertical = 1;
+public class LinearWidget extends ViewGroupWidget<LinearLayout, LinearWidget> {
+    public static final Integer horizontal = LinearLayout.HORIZONTAL;
+    public static final Integer vertical = LinearLayout.VERTICAL;
 
-    protected int orientation = horizontal;
+    protected Integer orientation = horizontal;
     protected Integer gravity;
+
+    public LinearWidget(Context context, Lifecycle lifecycle) {
+        this(context, lifecycle, (Widget) null);
+    }
 
     public LinearWidget(Context context, Lifecycle lifecycle, Widget... children) {
         super(context, lifecycle, children);
@@ -25,16 +29,16 @@ public class LinearWidget extends ViewGroupWidget<LinearLayout> {
         return new LinearLayout(context);
     }
 
-    public LinearWidget orientation(int orientation) {
+    public LinearWidget orientation(Integer orientation) {
         this.orientation = orientation;
         view.setOrientation(orientation);
-        return this;
+        return self();
     }
 
-    public LinearWidget gravity(int gravity) {
+    public LinearWidget gravity(Integer gravity) {
         this.gravity = gravity;
         view.setGravity(gravity);
-        return this;
+        return self();
     }
 
     @Override

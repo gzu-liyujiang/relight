@@ -28,13 +28,8 @@ public class WidgetUtils {
             }
 
             @Override
-            public void updateView(T view) {
-                androidRender.updateView(view);
-            }
-
-            @Override
-            public void bindEvent(T view) {
-                androidRender.bindEvent(view);
+            public void initEvent(T view) {
+                androidRender.initEvent(view);
             }
 
             @Override
@@ -44,8 +39,12 @@ public class WidgetUtils {
         };
     }
 
-    public static <T extends View> Widget<T> create(Context context, final T view) {
-        return new Widget<T>(context) {
+    public static <T extends View> Widget<T> create(Context context, Lifecycle lifecycle, final T view) {
+        return new Widget<T>(context, lifecycle) {
+            @Override
+            public void update() {
+            }
+
             @Override
             public T render() {
                 return view;

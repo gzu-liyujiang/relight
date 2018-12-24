@@ -11,11 +11,9 @@ import com.ittianyu.relight.widget.native_.FrameWidget;
 import com.ittianyu.relight.widget.stateless.StatelessWidget;
 
 public class CommonLoadingWidget extends StatelessWidget<FrameLayout, FrameWidget> {
-    protected Lifecycle lifecycle;
 
     public CommonLoadingWidget(Context context, Lifecycle lifecycle) {
-        super(context);
-        this.lifecycle = lifecycle;
+        super(context, lifecycle);
     }
 
     @Override
@@ -30,8 +28,8 @@ public class CommonLoadingWidget extends StatelessWidget<FrameLayout, FrameWidge
         widget.matchParent();
     }
 
-    private BaseAndroidWidget<ProgressBar> buildLoadingWidget() {
-        return new BaseAndroidWidget<ProgressBar>(context, lifecycle) {
+    private BaseAndroidWidget<ProgressBar, BaseAndroidWidget> buildLoadingWidget() {
+        return new BaseAndroidWidget<ProgressBar, BaseAndroidWidget>(context, lifecycle) {
             @Override
             protected void initProps() {
                 layoutGravity = Gravity.CENTER;

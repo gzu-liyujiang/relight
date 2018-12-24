@@ -9,7 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.ittianyu.relight.widget.Widget;
 
-public class SwipeRefreshWidget extends ViewGroupWidget<SwipeRefreshLayout> {
+public class SwipeRefreshWidget extends ViewGroupWidget<SwipeRefreshLayout, SwipeRefreshWidget> {
 
     private Boolean enabled;
     private Integer size;
@@ -18,6 +18,10 @@ public class SwipeRefreshWidget extends ViewGroupWidget<SwipeRefreshLayout> {
     private int[] colors;
     private Integer distance;
     private SwipeRefreshLayout.OnRefreshListener listener;
+
+    public SwipeRefreshWidget(Context context, Lifecycle lifecycle) {
+        this(context, lifecycle, (Widget) null);
+    }
 
     public SwipeRefreshWidget(Context context, Lifecycle lifecycle, Widget... children) {
         super(context, lifecycle, children);
@@ -51,49 +55,49 @@ public class SwipeRefreshWidget extends ViewGroupWidget<SwipeRefreshLayout> {
         }
     }
 
-    public SwipeRefreshWidget enabled(boolean enabled) {
+    public SwipeRefreshWidget enabled(Boolean enabled) {
         this.enabled = enabled;
         view.setEnabled(enabled);
-        return this;
+        return self();
     }
 
-    public SwipeRefreshWidget size(int size) {
+    public SwipeRefreshWidget size(Integer size) {
         this.size = size;
         view.setSize(size);
-        return this;
+        return self();
     }
 
-    public SwipeRefreshWidget refreshing(boolean refreshing) {
+    public SwipeRefreshWidget refreshing(Boolean refreshing) {
         this.refreshing = refreshing;
         view.setRefreshing(refreshing);
-        return this;
+        return self();
     }
 
     public SwipeRefreshWidget colorSchemeResources(@ColorRes int... colorResIds) {
         this.colorResIds = colorResIds;
         view.setColorSchemeResources(colorResIds);
-        return this;
+        return self();
     }
 
     public SwipeRefreshWidget colorSchemeColors(@ColorInt int... colors) {
         this.colors = colors;
         view.setColorSchemeColors(colors);
-        return this;
+        return self();
     }
 
-    public SwipeRefreshWidget distanceToTriggerSync(int distance) {
+    public SwipeRefreshWidget distanceToTriggerSync(Integer distance) {
         this.distance = distance;
         view.setDistanceToTriggerSync(distance);
-        return this;
+        return self();
     }
 
     public SwipeRefreshWidget onRefreshListener(SwipeRefreshLayout.OnRefreshListener listener) {
         this.listener = listener;
         view.setOnRefreshListener(listener);
-        return this;
+        return self();
     }
 
-    public boolean isRefreshing() {
+    public Boolean isRefreshing() {
         return view.isRefreshing();
     }
 }
